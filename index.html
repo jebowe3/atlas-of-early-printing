@@ -86,6 +86,8 @@
 
     // Define an empty layer group for the filtered data
     const conflictsFiltered = L.layerGroup().addTo(map);
+    const spreadOfPrintingFiltered = L.layerGroup().addTo(map);
+    const universitiesFiltered = L.layerGroup().addTo(map);
 
     // use jquery to load migration GeoJSON data
     $.when(
@@ -114,7 +116,7 @@
           radius: 4 // set the radii of the circles
         });
       }
-    }).addTo(map);
+    });
 
     const conflicts = L.geoJson(conf, {
       pointToLayer: function(feature, latlng) { // using pointToLayer...
@@ -150,7 +152,7 @@
           radius: 4 // set the radii of the circles
         });
       }
-    }).addTo(map);
+    });
 
     const mills = L.geoJson(pape, {
       pointToLayer: function(feature, latlng) { // using pointToLayer...
@@ -166,7 +168,11 @@
 
     // define the overlays
     const overlays = {
-      "Conflicts": conflictsFiltered,
+      "Spread of Printing": spreadOfPrintingFiltered,
+      "Paper Mills": mills,
+      "Universities": universitiesFiltered,
+      "Fairs": fairs,
+      "Conflicts": conflictsFiltered
     };
 
     // add layer control to map
@@ -175,7 +181,7 @@
     }).addTo(map);
 
     // call the sequenceUI function
-    sequenceUI(conflicts);
+    sequenceUI(conflicts, spreadOfPrinting, universities);
 
     // define firstYear
     let firstYear = $('#slider-range').slider("values", 0);
@@ -183,12 +189,12 @@
     let secondYear = $('#slider-range').slider("values", 1);
 
     // call the updateData function
-    updateData(conflicts, firstYear, secondYear);
+    updateData(conflicts, spreadOfPrinting, universities, firstYear, secondYear);
 
   });
 
   // define the UI slider with a function called "sequenceUI"
-  function sequenceUI(conflicts) {
+  function sequenceUI(conflicts, spreadOfPrinting, universities) {
     $( "#slider-range" ).slider({
       range: true,
       min: 1450,
@@ -201,11 +207,33 @@
           let startYear = layer.feature.properties.STRYEAR;
           let endYear = layer.feature.properties.ENDYEAR;
           if (startYear >= ui.values[0] && endYear <= ui.values[1]) {
-            // if there is a match, add the wildfires layer to the conflictsFiltered layer group
+            // if there is a match, add the layer to the conflictsFiltered layer group
             conflictsFiltered.addLayer(layer);
           } else {
             // otherwise, remove the layer from the conflictsFiltered layer group
             conflictsFiltered.removeLayer(layer);
+          };
+        });
+        // iterate through the spreadOfPrinting layer
+        spreadOfPrinting.eachLayer(function(layer) {
+          let year = layer.feature.properties.YEAR;
+          if (year <= ui.values[1]) {
+            // if there is a match, add the layer to the spreadOfPrintingFiltered layer group
+            spreadOfPrintingFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the spreadOfPrintingFiltered layer group
+            spreadOfPrintingFiltered.removeLayer(layer);
+          };
+        });
+        // iterate through the universities layer
+        universities.eachLayer(function(layer) {
+          let year = layer.feature.properties.YEAR;
+          if (year <= ui.values[1]) {
+            // if there is a match, add the layer to the universitiesFiltered layer group
+            universitiesFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the universitiesFiltered layer group
+            universitiesFiltered.removeLayer(layer);
           };
         });
       }
@@ -214,18 +242,40 @@
       " - " + $( "#slider-range" ).slider( "values", 1 ) );
   };
 
-  function updateData(conflicts, firstYear, secondYear) {
+  function updateData(conflicts, spreadOfPrinting, universities, firstYear, secondYear) {
 
     // iterate through the conflicts layer
     conflicts.eachLayer(function(layer) {
       let startYear = layer.feature.properties.STRYEAR;
       let endYear = layer.feature.properties.ENDYEAR;
       if (startYear >= firstYear && endYear <= secondYear) {
-        // if there is a match, add the wildfires layer to the conflictsFiltered layer group
+        // if there is a match, add the layer to the conflictsFiltered layer group
         conflictsFiltered.addLayer(layer);
       } else {
         // otherwise, remove the layer from the conflictsFiltered layer group
         conflictsFiltered.removeLayer(layer);
+      };
+    });
+    // iterate through the spreadOfPrinting layer
+    spreadOfPrinting.eachLayer(function(layer) {
+      let year = layer.feature.properties.YEAR;
+      if (year <= secondYear) {
+        // if there is a match, add the layer to the spreadOfPrintingFiltered layer group
+        spreadOfPrintingFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the spreadOfPrintingFiltered layer group
+        spreadOfPrintingFiltered.removeLayer(layer);
+      };
+    });
+    // iterate through the universities layer
+    universities.eachLayer(function(layer) {
+      let year = layer.feature.properties.YEAR;
+      if (year <= secondYear) {
+        // if there is a match, add the layer to the universitiesFiltered layer group
+        universitiesFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the universitiesFiltered layer group
+        universitiesFiltered.removeLayer(layer);
       };
     });
 

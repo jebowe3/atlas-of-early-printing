@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
   <!-- Add a link to JQuery UI -->
   <link rel="stylesheet" href="libraries/jquery-ui.min.css" />
+  <!-- Font css -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aboreto&family=Baskervville&display=swap" rel="stylesheet">
   <!-- All the CSS code goes inside the style tags below -->
   <style>
     /* style the body */
@@ -46,6 +50,22 @@
       width: 100%;
       z-index: 700;
     }
+
+    #date {
+      font-family: 'Aboreto', cursive;
+      font-size: 13px;
+    }
+
+    #amount {
+      font-family: 'Aboreto', cursive;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .leaflet-control-layers-expanded .leaflet-control-layers-list {
+      font-family: 'Baskervville', serif;
+      font-size: 13px;
+    }
   </style>
 </head>
 
@@ -55,8 +75,8 @@
 
   <div id="slider-control">
     <p>
-      <label for="amount">Date range:</label>
-      <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+      <label for="amount" id="date">Date range:</label>
+      <input type="text" id="amount" readonly style="border:0; color:#00000;">
     </p>
 
     <div id="slider-range"></div>

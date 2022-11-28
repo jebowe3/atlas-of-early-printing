@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Give the page a title -->
+  <title>Atlas of Early Printing</title>
+  <!-- Add a link to the Leaflet CSS library so you can reference it for styling your map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+  <!-- Add a link to JQuery UI -->
+  <link rel="stylesheet" href="libraries/jquery-ui.min.css" />
+  <!-- All the CSS code goes inside the style tags below -->
+  <style>
+    /* style the body */
+    body {
+      margin: 0px;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* style the map */
+    #map {
+      position: absolute;
+      width: 100%;
+      top: 0px;
+      bottom: 0;
+    }
+
+    /* style the slider-control div */
+    #slider-control {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 700;
+      background-color: rgba(255, 255, 255, 0.6);
+      padding: 0px 15px 15px 15px;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    #slider-range {
+      /*position: fixed;
+      bottom: 10px;
+      left: 10px;*/
+      width: 100%;
+      z-index: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- the map -->
+  <div id="map"></div>
+
+  <div id="slider-control">
+    <p>
+      <label for="amount">Date range:</label>
+      <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+    </p>
+
+    <div id="slider-range"></div>
+  </div>
+
+  <!-- Add a link to the Leaflet JavaScript library so you can reference it for building your map -->
+  <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+  <!-- Add a link to the jQuery JavaScript library so you can leverage ajax methods to load your data -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Add a link to JQuery UI -->
+  <script src="libraries/jquery-ui.min.js"></script>
+  <!-- All JavaScript goes inside the script tags below -->
+  <script>
+    // define map options
+    const mapOptions = {
+      center: [48, 5], // center the map on the coordinates for Europe
+      zoom: 5, // set the initial zoom
+    };
+
+    // define the map with the options above
+    const map = L.map("map", mapOptions);
+
+    // add a base map to the map
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    }).addTo(map);
+
+    // Define an empty layer group for the filtered data
+    const conflictsFiltered = L.layerGroup().addTo(map);
+
+    // use jquery to load migration GeoJSON data
+    $.when(
+      $.getJSON("data/bishoprics.geojson"),
+      $.getJSON("data/conflicts.geojson"),
+      $.getJSON("data/ecclesiastical_borders.geojson"),
+      $.getJSON("data/fairs.geojson"),
+      $.getJSON("data/output_by_location.geojson"),
+      $.getJSON("data/paper_mills.geojson"),
+      $.getJSON("data/political_borders.geojson"),
+      $.getJSON("data/spread_of_printing.geojson"),
+      $.getJSON("data/trade_routes.geojson"),
+      $.getJSON("data/typography.geojson"),
+      $.getJSON("data/universities.geojson")
+    // when the files are done loading,
+    // identify them with names and process them through a function
+  ).done(function(bish,conf,eccl,fair,outp,pape,poli,spre,trad,typo,univ) {
+
+    const spreadOfPrinting = L.geoJson(spre, {
+      pointToLayer: function(feature, latlng) { // using pointToLayer...
+        return L.circleMarker(latlng, {
+          fillColor: 'red', // set the fill color
+          color: 'red', // set the border color
+          weight: 1, // set the weight of the border
+          fillOpacity: 0.8, // set the opacity of the fill color
+          radius: 4 // set the radii of the circles
+        });
+      }
+    }).addTo(map);
+
+    const conflicts = L.geoJson(conf, {
+      pointToLayer: function(feature, latlng) { // using pointToLayer...
+        return L.circleMarker(latlng, {
+          fillColor: 'black', // set the fill color
+          color: 'black', // set the border color
+          weight: 1, // set the weight of the border
+          fillOpacity: 0.8, // set the opacity of the fill color
+          radius: 4 // set the radii of the circles
+        });
+      }
+    });
+
+    const fairs = L.geoJson(fair, {
+      pointToLayer: function(feature, latlng) { // using pointToLayer...
+        return L.circleMarker(latlng, {
+          fillColor: 'red', // set the fill color
+          color: 'gold', // set the border color
+          weight: 1, // set the weight of the border
+          fillOpacity: 0.8, // set the opacity of the fill color
+          radius: 4 // set the radii of the circles
+        });
+      }
+    }).addTo(map);
+
+    const universities = L.geoJson(univ, {
+      pointToLayer: function(feature, latlng) { // using pointToLayer...
+        return L.circleMarker(latlng, {
+          fillColor: '#0096FF', // set the fill color
+          color: '#0096FF', // set the border color
+          weight: 1, // set the weight of the border
+          fillOpacity: 0.8, // set the opacity of the fill color
+          radius: 4 // set the radii of the circles
+        });
+      }
+    }).addTo(map);
+
+    const mills = L.geoJson(pape, {
+      pointToLayer: function(feature, latlng) { // using pointToLayer...
+        return L.circleMarker(latlng, {
+          fillColor: 'yellow', // set the fill color
+          color: 'yellow', // set the border color
+          weight: 1, // set the weight of the border
+          fillOpacity: 0.8, // set the opacity of the fill color
+          radius: 4 // set the radii of the circles
+        });
+      }
+    }).addTo(map);
+
+    // define the overlays
+    const overlays = {
+      "Conflicts": conflictsFiltered,
+    };
+
+    // add layer control to map
+    L.control.layers(null, overlays, {
+      collapsed: false
+    }).addTo(map);
+
+    // call the sequenceUI function
+    sequenceUI(conflicts);
+
+    // define firstYear
+    let firstYear = $('#slider-range').slider("values", 0);
+    // define secondYear
+    let secondYear = $('#slider-range').slider("values", 1);
+
+    // call the updateData function
+    updateData(conflicts, firstYear, secondYear);
+
+  });
+
+  // define the UI slider with a function called "sequenceUI"
+  function sequenceUI(conflicts) {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 1450,
+      max: 1500,
+      values: [ 1450, 1460 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        // iterate through the conflicts layer
+        conflicts.eachLayer(function(layer) {
+          let startYear = layer.feature.properties.STRYEAR;
+          let endYear = layer.feature.properties.ENDYEAR;
+          if (startYear >= ui.values[0] && endYear <= ui.values[1]) {
+            // if there is a match, add the wildfires layer to the conflictsFiltered layer group
+            conflictsFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the conflictsFiltered layer group
+            conflictsFiltered.removeLayer(layer);
+          };
+        });
+      }
+    });
+    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+  };
+
+  function updateData(conflicts, firstYear, secondYear) {
+
+    // iterate through the conflicts layer
+    conflicts.eachLayer(function(layer) {
+      let startYear = layer.feature.properties.STRYEAR;
+      let endYear = layer.feature.properties.ENDYEAR;
+      if (startYear >= firstYear && endYear <= secondYear) {
+        // if there is a match, add the wildfires layer to the conflictsFiltered layer group
+        conflictsFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the conflictsFiltered layer group
+        conflictsFiltered.removeLayer(layer);
+      };
+    });
+
+  };
+
+  </script>
+</body>
+
+</html>

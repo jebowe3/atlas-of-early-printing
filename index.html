@@ -66,6 +66,69 @@
       font-family: 'Baskervville', serif;
       font-size: 13px;
     }
+
+    .custom .leaflet-popup-content{
+      padding: 0px, 0px, 0px, 0px;
+      margin: 0px, 0px, 0px, 0px;
+    }
+
+    .custom .leaflet-popup-content-wrapper{
+      padding: 0px, 0px, 0px, 0px;
+      border-radius: 3px;
+    }
+
+    .custom h4 {
+      background: #454545;
+      color: #ffffff;
+      padding: 3px 3px 3px 3px;
+      font-weight: normal;
+      font-size: 13px;
+      margin: 0px;
+    }
+
+    .custom h5 {
+      background: #FAF9F6;
+      padding: 3px 3px 3px 3px;
+      font-weight: normal;
+      font-size: 13px;
+      margin: 0px;
+    }
+
+    button {
+      align-items: normal;
+      background-color: rgba(0,0,0,0);
+      border-color: #0078A8;
+      border-style: none;
+      box-sizing: content-box;
+      color: #0078A8;
+      cursor: pointer;
+      display: inline;
+      font: inherit;
+      height: auto;
+      padding: 0;
+      perspective-origin: 0 0;
+      text-align: start;
+      text-decoration: underline;
+      transform-origin: 0 0;
+      width: auto;
+      -moz-appearance: none;
+      -webkit-logical-height: 1em; /* Chrome ignores auto, so we have to use this hack to set the correct height  */
+      -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
+    }
+
+    /* Mozilla uses a pseudo-element to show focus on buttons, */
+    /* but anchors are highlighted via the focus pseudo-class. */
+
+    @supports (-moz-appearance:none) { /* Mozilla-only */
+      button::-moz-focus-inner { /* reset any predefined properties */
+        border: none;
+        padding: 0;
+      }
+      button:focus { /* add outline to focus pseudo-class */
+        outline-style: dotted;
+        outline-width: 1px;
+      }
+    }
   </style>
 </head>
 
@@ -135,7 +198,28 @@
           fillOpacity: 0.8, // set the opacity of the fill color
           radius: 4 // set the radii of the circles
         });
+      },
+      onEachFeature: function(feature, layer) {
+
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        console.log(latlngStr);
+
+        layer.bindPopup('<h4>Spread of Printing Information</h4>' +
+                         '<h5>City: ' + layer.feature.properties.PLACE +
+                         '<br>Year of First Printing: ' + layer.feature.properties.YEAR +
+                         '<br>Printer: ' + layer.feature.properties.PRINTER +
+                         '<br><br><u>First Work</u>' +
+                         '<br>Author: ' + layer.feature.properties.AUTHOR +
+                         '<br>' + layer.feature.properties.ISTC + ' - <a href="' + 'https://data.cerl.org/istc/' + layer.feature.properties.ISTC + '"' + 'target="_blank" rel="noopener noreferrer">View the ISTC Record' + '</a>' +
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom</button>" + '</h5>', {
+          'className' : 'custom'
+        });
       }
+    });
+
+    $('#map').on('click', '.speciallink', function(e, feature) {
+      console.log(feature);
     });
 
     const conflicts = L.geoJson(conf, {
@@ -299,6 +383,11 @@
       };
     });
 
+  };
+
+  // Define a function for zooming to point locations
+  function getLoc(latlng){
+    map.flyTo(JSON.parse(latlng), 8);
   };
 
   </script>

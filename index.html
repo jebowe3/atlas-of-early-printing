@@ -93,7 +93,27 @@
       font-size: 13px;
       margin: 0px;
     }
+/*
+    button {
+      background:none;
+      border:none;
+      padding: 0;
+    }
+*/
 
+    button {
+      display: inline;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      background: transparent;
+      color: #0078A8;
+
+      -webkit-appearance: none;
+    }
+/*
     button {
       align-items: normal;
       background-color: rgba(0,0,0,0);
@@ -113,22 +133,23 @@
       width: auto;
       -moz-appearance: none;
       -webkit-logical-height: 1em; /* Chrome ignores auto, so we have to use this hack to set the correct height  */
-      -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
-    }
+/*      -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
+/*    }
 
     /* Mozilla uses a pseudo-element to show focus on buttons, */
     /* but anchors are highlighted via the focus pseudo-class. */
 
-    @supports (-moz-appearance:none) { /* Mozilla-only */
-      button::-moz-focus-inner { /* reset any predefined properties */
-        border: none;
+/*    @supports (-moz-appearance:none) { /* Mozilla-only */
+/*      button::-moz-focus-inner { /* reset any predefined properties */
+/*        border: none;
         padding: 0;
       }
       button:focus { /* add outline to focus pseudo-class */
-        outline-style: dotted;
+/*        outline-style: dotted;
         outline-width: 1px;
       }
     }
+*/
   </style>
 </head>
 
@@ -201,10 +222,10 @@
       },
       onEachFeature: function(feature, layer) {
 
+        // identify the coordinates
         const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
 
-        console.log(latlngStr);
-
+        // bind a popup to the layer
         layer.bindPopup('<h4>Spread of Printing Information</h4>' +
                          '<h5>City: ' + layer.feature.properties.PLACE +
                          '<br>Year of First Printing: ' + layer.feature.properties.YEAR +
@@ -212,14 +233,11 @@
                          '<br><br><u>First Work</u>' +
                          '<br>Author: ' + layer.feature.properties.AUTHOR +
                          '<br>' + layer.feature.properties.ISTC + ' - <a href="' + 'https://data.cerl.org/istc/' + layer.feature.properties.ISTC + '"' + 'target="_blank" rel="noopener noreferrer">View the ISTC Record' + '</a>' +
-                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom</button>" + '</h5>', {
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
           'className' : 'custom'
         });
-      }
-    });
 
-    $('#map').on('click', '.speciallink', function(e, feature) {
-      console.log(feature);
+      }
     });
 
     const conflicts = L.geoJson(conf, {
@@ -231,6 +249,22 @@
           fillOpacity: 0.8, // set the opacity of the fill color
           radius: 4 // set the radii of the circles
         });
+      },
+      onEachFeature: function(feature, layer) {
+
+        // identify the coordinates
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        // bind a popup to the layer
+        layer.bindPopup('<h4>Conflict Information</h4>' +
+                         '<h5>Name: ' + layer.feature.properties.NAME +
+                         '<br>Conflict: ' + layer.feature.properties.CONFLICT +
+                         '<br>Years: ' + layer.feature.properties.STRYEAR + ' - ' + layer.feature.properties.ENDYEAR +
+                         '<br>Source: ' + layer.feature.properties.SOURCE +
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
+          'className' : 'custom'
+        });
+
       }
     });
 
@@ -243,6 +277,20 @@
           fillOpacity: 0.8, // set the opacity of the fill color
           radius: 4 // set the radii of the circles
         });
+      },
+      onEachFeature: function(feature, layer) {
+
+        // identify the coordinates
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        // bind a popup to the layer
+        layer.bindPopup('<h4>Fair Information</h4>' +
+                         '<h5>Place: ' + layer.feature.properties.PLACE +
+                         '<br>Text: ' + layer.feature.properties.TEXT +
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
+          'className' : 'custom'
+        });
+
       }
     }).addTo(map);
 
@@ -255,6 +303,21 @@
           fillOpacity: 0.8, // set the opacity of the fill color
           radius: 4 // set the radii of the circles
         });
+      },
+      onEachFeature: function(feature, layer) {
+
+        // identify the coordinates
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        // bind a popup to the layer
+        layer.bindPopup('<h4>University Information</h4>' +
+                         '<h5>Place: ' + layer.feature.properties.PLACE +
+                         '<br>Year Established: ' + layer.feature.properties.YEAR +
+                         '<br>Text: ' + layer.feature.properties.TEXT +
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
+          'className' : 'custom'
+        });
+
       }
     });
 
@@ -267,6 +330,19 @@
           fillOpacity: 0.8, // set the opacity of the fill color
           radius: 4 // set the radii of the circles
         });
+      },
+      onEachFeature: function(feature, layer) {
+
+        // identify the coordinates
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        // bind a popup to the layer
+        layer.bindPopup('<h4>Mill City Information</h4>' +
+                         '<h5>' + layer.feature.properties.CITY_NAME +
+                         '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
+          'className' : 'custom'
+        });
+
       }
     }).addTo(map);
 

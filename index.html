@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
   <!-- Add a link to JQuery UI -->
   <link rel="stylesheet" href="libraries/jquery-ui.min.css" />
+  <!-- Add a link to css for layer control -->
+  <link rel="stylesheet" href="libraries/L.Control.Layers.Tree.css" />
   <!-- Font css -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +66,7 @@
 
     .leaflet-control-layers-expanded .leaflet-control-layers-list {
       font-family: 'Baskervville', serif;
-      font-size: 13px;
+      /*font-size: 13px;*/
     }
 
     .custom .leaflet-popup-content{
@@ -112,6 +114,11 @@
       color: #0078A8;
 
       -webkit-appearance: none;
+    }
+
+    .lcontrol {
+      max-width: 125px;
+      font-size: 10px;
     }
 /*
     button {
@@ -172,6 +179,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <!-- Add a link to JQuery UI -->
   <script src="libraries/jquery-ui.min.js"></script>
+  <!-- Add a link to js for layer control -->
+  <script src="libraries/L.Control.Layers.Tree.js"></script>
   <!-- All JavaScript goes inside the script tags below -->
   <script>
     // define map options
@@ -346,6 +355,19 @@
       }
     }).addTo(map);
 
+    const overlaysTree = {
+      label: '<font style="font-size:14px">Layers</font>',
+      collapsed: false,
+      children: [
+        {label: 'Spread of Printing<div id="printingDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: spreadOfPrintingFiltered},
+        { label: 'Paper Mills<div id="millsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: mills },
+        { label: 'Universities<div id="univDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: universitiesFiltered },
+        { label: 'Fairs<div id="fairsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: fairs },
+        { label: 'Conflicts<div id="conflictsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: conflictsFiltered },
+      ]
+    };
+
+/*
     // define the overlays
     const overlays = {
       "Spread of Printing": spreadOfPrintingFiltered,
@@ -359,6 +381,86 @@
     L.control.layers(null, overlays, {
       collapsed: false
     }).addTo(map);
+*/
+
+    L.control.layers.tree(null, overlaysTree, {
+      collapsed: false,
+      closedSymbol: '&#9656',
+      openedSymbol: '&#9662'
+    }).addTo(map);
+
+    // Test to see which layers are on when the map opens
+    if (map.hasLayer(spreadOfPrintingFiltered)) {
+      document.getElementById("printingDiv").style.display = "block";
+    } else {
+      document.getElementById("printingDiv").style.display = "none";
+    } if (map.hasLayer(mills)) {
+      document.getElementById("millsDiv").style.display = "block";
+    } else {
+      document.getElementById("millsDiv").style.display = "none";
+    } if (map.hasLayer(universitiesFiltered)) {
+      document.getElementById("univDiv").style.display = "block";
+    } else {
+      document.getElementById("univDiv").style.display = "none";
+    } if (map.hasLayer(fairs)) {
+      document.getElementById("fairsDiv").style.display = "block";
+    } else {
+      document.getElementById("fairsDiv").style.display = "none";
+    } if (map.hasLayer(conflictsFiltered)) {
+      document.getElementById("conflictsDiv").style.display = "block";
+    } else {
+      document.getElementById("conflictsDiv").style.display = "none";
+    };
+
+    // Test to see which layers are turned on or off by the user
+    map.on({
+      overlayremove: function() {
+        if (map.hasLayer(spreadOfPrintingFiltered)) {
+          document.getElementById("printingDiv").style.display = "block";
+        } else {
+          document.getElementById("printingDiv").style.display = "none";
+        } if (map.hasLayer(mills)) {
+          document.getElementById("millsDiv").style.display = "block";
+        } else {
+          document.getElementById("millsDiv").style.display = "none";
+        } if (map.hasLayer(universitiesFiltered)) {
+          document.getElementById("univDiv").style.display = "block";
+        } else {
+          document.getElementById("univDiv").style.display = "none";
+        } if (map.hasLayer(fairs)) {
+          document.getElementById("fairsDiv").style.display = "block";
+        } else {
+          document.getElementById("fairsDiv").style.display = "none";
+        } if (map.hasLayer(conflictsFiltered)) {
+          document.getElementById("conflictsDiv").style.display = "block";
+        } else {
+          document.getElementById("conflictsDiv").style.display = "none";
+        };
+      },
+      overlayadd: function() {
+        if (map.hasLayer(spreadOfPrintingFiltered)) {
+          document.getElementById("printingDiv").style.display = "block";
+        } else {
+          document.getElementById("printingDiv").style.display = "none";
+        } if (map.hasLayer(mills)) {
+          document.getElementById("millsDiv").style.display = "block";
+        } else {
+          document.getElementById("millsDiv").style.display = "none";
+        } if (map.hasLayer(universitiesFiltered)) {
+          document.getElementById("univDiv").style.display = "block";
+        } else {
+          document.getElementById("univDiv").style.display = "none";
+        } if (map.hasLayer(fairs)) {
+          document.getElementById("fairsDiv").style.display = "block";
+        } else {
+          document.getElementById("fairsDiv").style.display = "none";
+        } if (map.hasLayer(conflictsFiltered)) {
+          document.getElementById("conflictsDiv").style.display = "block";
+        } else {
+          document.getElementById("conflictsDiv").style.display = "none";
+        };
+      }
+    });
 
     // call the sequenceUI function
     sequenceUI(conflicts, spreadOfPrinting, universities);

@@ -187,6 +187,7 @@
     const mapOptions = {
       center: [48, 5], // center the map on the coordinates for Europe
       zoom: 5, // set the initial zoom
+      //renderer: L.canvas(),
     };
 
     // define the map with the options above
@@ -352,6 +353,49 @@
           'className' : 'custom'
         });
 
+      }
+    }).addTo(map);
+
+    const typography = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'G') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/red.png'
+            })
+          });
+        } if (props.CLASS == 'R') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/blue.png'
+            })
+          });
+        } if (props.CLASS == 'Gr') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/orange.png'
+            })
+          });
+        } if (props.CLASS == 'H') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/yellow.png'
+            })
+          });
+        } if (props.CLASS == ' ') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/white.png'
+            })
+          });
+        } if (props.CLASS == 'Gl') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/green.png'
+            })
+          });
+        }
       }
     }).addTo(map);
 

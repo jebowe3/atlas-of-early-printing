@@ -157,6 +157,16 @@
       }
     }
 */
+/*
+    .leaflet-popup {
+      min-width: 300px;
+    }
+*/
+    .popupImage {
+        max-width: 100%;
+        max-height: 50%;
+    }
+
   </style>
 </head>
 
@@ -402,6 +412,24 @@
             })
           });
         }
+      },
+      onEachFeature: function(feature, layer) {
+
+        // identify the coordinates
+        const latlngStr = JSON.stringify([layer.getLatLng().lat,layer.getLatLng().lng]);
+
+        // bind a popup to the layer
+        layer.bindPopup('<h4>Typography Information</h4>' +
+                        '<h5>Type: ' + layer.feature.properties.TYPE +
+                        '<br>M Shape: ' + layer.feature.properties.MSHAPE +
+                        '<br>Printer: ' + layer.feature.properties.PRINTER +
+                        '<br>Place: ' + layer.feature.properties.PLACE +
+                        '<br><img src="' + layer.feature.properties.GFTLNK + '" class=popupImage >' +
+                        '<br>'+ "<button onclick= 'getLoc(\""+latlngStr+"\")'>Zoom to</button>" + '</h5>', {
+          minWidth: 250,
+          'className' : 'custom'
+        });
+
       }
     });
 

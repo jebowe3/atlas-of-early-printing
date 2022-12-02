@@ -523,7 +523,8 @@
         { label: 'Fairs<div id="fairsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: fairs },
         { label: 'Conflicts<div id="conflictsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: conflictsFiltered },
         {
-          label: 'Typography',
+          label: 'Typography<div id="typographyDiv" class="lcontrol" style="display:none">Data generated from the <a href="https://tw.staatsbibliothek-berlin.de/" target="_blank" rel="noopener noreferrer">Typenrepertorium</a>.</div>',
+          collapsed: true,
           children: [
             { label: 'Gothic', layer: gothicFiltered},
             { label: 'Romanesque', layer: romanFiltered},
@@ -557,6 +558,37 @@
       closedSymbol: '&#9656',
       openedSymbol: '&#9662'
     }).addTo(map);
+
+    // get the numeric position of the typography entry in the layer control
+    const typographyPosition = overlaysTree.children.length - 1;
+
+    // check if typography is collapsed on map loading
+    if (overlaysTree.children[typographyPosition].collapsed == false) {
+      document.getElementById("typographyDiv").style.display = "block";
+    } else {
+      document.getElementById("typographyDiv").style.display = "none";
+    }
+
+    // listen for a click on the collapsible headers in the layer control
+    $('.leaflet-layerstree-header.leaflet-layerstree-header-pointer').on('click', function(event) {
+
+      // define the layer labels in the layer control
+      let layersList = $('.leaflet-layerstree-header-name');
+
+      // loop through all of the layer labels
+      for (var i = 0; i < layersList.length; i++) {
+        // if one of them is Gothic...
+        if (layersList[i].innerText == 'Gothic') {
+          // check if it is hidden or visible
+          if ( $('.leaflet-layerstree-header-name').is(':hidden') == true) {
+            document.getElementById("typographyDiv").style.display = "none";
+          } else {
+            document.getElementById("typographyDiv").style.display = "block";
+          }
+        }
+      };
+
+    });
 
     // Test to see which layers are on when the map opens
     if (map.hasLayer(spreadOfPrintingFiltered)) {

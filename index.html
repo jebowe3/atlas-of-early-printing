@@ -199,9 +199,15 @@
     }).addTo(map);
 
     // Define an empty layer group for the filtered data
-    const conflictsFiltered = L.layerGroup().addTo(map);
-    const spreadOfPrintingFiltered = L.layerGroup().addTo(map);
-    const universitiesFiltered = L.layerGroup().addTo(map);
+    const conflictsFiltered = L.layerGroup();
+    const spreadOfPrintingFiltered = L.layerGroup();
+    const universitiesFiltered = L.layerGroup();
+    const gothicFiltered = L.layerGroup().addTo(map);
+    const romanFiltered = L.layerGroup().addTo(map);
+    const greekFiltered = L.layerGroup().addTo(map);
+    const hebrewFiltered = L.layerGroup().addTo(map);
+    const cyrillicFiltered = L.layerGroup().addTo(map);
+    const glagolithicFiltered = L.layerGroup().addTo(map);
 
     // use jquery to load migration GeoJSON data
     $.when(
@@ -302,7 +308,7 @@
         });
 
       }
-    }).addTo(map);
+    });
 
     const universities = L.geoJson(univ, {
       pointToLayer: function(feature, latlng) { // using pointToLayer...
@@ -354,7 +360,7 @@
         });
 
       }
-    }).addTo(map);
+    });
 
     const typography = L.geoJson(typo, {
       pointToLayer: function(feature, latlng) {
@@ -397,17 +403,108 @@
           });
         }
       }
-    }).addTo(map);
+    });
+
+/*
+    const gothic = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'G') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/red.png'
+            })
+          });
+        }
+      }
+    });
+
+    const roman = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'R') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/blue.png'
+            })
+          });
+        }
+      }
+    });
+
+    const greek = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'Gr') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/orange.png'
+            })
+          });
+        }
+      }
+    });
+
+    const hebrew = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'H') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/yellow.png'
+            })
+          });
+        }
+      }
+    });
+
+    const cyrillic = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == ' ') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/white.png'
+            })
+          });
+        }
+      }
+    });
+
+    const glagolithic = L.geoJson(typo, {
+      pointToLayer: function(feature, latlng) {
+        const props = feature.properties;
+        if (props.CLASS == 'Gl') {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/green.png'
+            })
+          });
+        }
+      }
+    });
+*/
 
     const overlaysTree = {
       label: '<font style="font-size:14px">Layers</font>',
       collapsed: false,
       children: [
-        {label: 'Spread of Printing<div id="printingDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: spreadOfPrintingFiltered},
+        { label: 'Spread of Printing<div id="printingDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: spreadOfPrintingFiltered},
         { label: 'Paper Mills<div id="millsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: mills },
         { label: 'Universities<div id="univDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: universitiesFiltered },
         { label: 'Fairs<div id="fairsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: fairs },
         { label: 'Conflicts<div id="conflictsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>', layer: conflictsFiltered },
+        {
+          label: 'Typography',
+          children: [
+            { label: 'Gothic', layer: gothicFiltered},
+            { label: 'Romanesque', layer: romanFiltered},
+            { label: 'Greek', layer: greekFiltered},
+            { label: 'Hebrew', layer: hebrewFiltered},
+            { label: 'Cyrillic', layer: cyrillicFiltered},
+            { label: 'Glagolithic', layer: glagolithicFiltered},
+          ]
+        }
       ]
     };
 
@@ -507,7 +604,7 @@
     });
 
     // call the sequenceUI function
-    sequenceUI(conflicts, spreadOfPrinting, universities);
+    sequenceUI(conflicts, spreadOfPrinting, universities, typography /*gothic, roman, greek, hebrew, cyrillic, glagolithic*/);
 
     // define firstYear
     let firstYear = $('#slider-range').slider("values", 0);
@@ -515,12 +612,12 @@
     let secondYear = $('#slider-range').slider("values", 1);
 
     // call the updateData function
-    updateData(conflicts, spreadOfPrinting, universities, firstYear, secondYear);
+    updateData(conflicts, spreadOfPrinting, universities, typography,/*gothic, roman, greek, hebrew, cyrillic, glagolithic,*/ firstYear, secondYear);
 
   });
 
   // define the UI slider with a function called "sequenceUI"
-  function sequenceUI(conflicts, spreadOfPrinting, universities) {
+  function sequenceUI(conflicts, spreadOfPrinting, universities, typography /*gothic, roman, greek, hebrew, cyrillic, glagolithic*/) {
     $( "#slider-range" ).slider({
       range: true,
       min: 1450,
@@ -562,13 +659,61 @@
             universitiesFiltered.removeLayer(layer);
           };
         });
+        // iterate through the typography layer
+        typography.eachLayer(function(layer) {
+          let props = layer.feature.properties;
+          let startYear = props.START;
+          let endYear = props.END;
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == 'G') {
+            // if there is a match, add the layer to the gothicFiltered layer group
+            gothicFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the gothicFiltered layer group
+            gothicFiltered.removeLayer(layer);
+          };
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == 'R') {
+            // if there is a match, add the layer to the romanFiltered layer group
+            romanFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the romanFiltered layer group
+            romanFiltered.removeLayer(layer);
+          };
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == 'Gr') {
+            // if there is a match, add the layer to the greekFiltered layer group
+            greekFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the greekFiltered layer group
+            greekFiltered.removeLayer(layer);
+          };
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == 'H') {
+            // if there is a match, add the layer to the hebrewFiltered layer group
+            hebrewFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the hebrewFiltered layer group
+            hebrewFiltered.removeLayer(layer);
+          };
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == ' ') {
+            // if there is a match, add the layer to the cyrillicFiltered layer group
+            cyrillicFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the cyrillicFiltered layer group
+            cyrillicFiltered.removeLayer(layer);
+          };
+          if (startYear >= ui.values[0] && endYear <= ui.values[1] && props.CLASS == 'Gl') {
+            // if there is a match, add the layer to the glagolithicFiltered layer group
+            glagolithicFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the glagolithicFiltered layer group
+            glagolithicFiltered.removeLayer(layer);
+          };
+        });
       }
     });
     $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
       " - " + $( "#slider-range" ).slider( "values", 1 ) );
   };
 
-  function updateData(conflicts, spreadOfPrinting, universities, firstYear, secondYear) {
+  function updateData(conflicts, spreadOfPrinting, universities, typography/*gothic, roman, greek, hebrew, cyrillic, glagolithic*/, firstYear, secondYear) {
 
     // iterate through the conflicts layer
     conflicts.eachLayer(function(layer) {
@@ -604,7 +749,54 @@
         universitiesFiltered.removeLayer(layer);
       };
     });
-
+    // iterate through the typography layer
+    typography.eachLayer(function(layer) {
+      let props = layer.feature.properties;
+      let startYear = props.START;
+      let endYear = props.END;
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == 'G') {
+        // if there is a match, add the layer to the gothicFiltered layer group
+        gothicFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the gothicFiltered layer group
+        gothicFiltered.removeLayer(layer);
+      };
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == 'R') {
+        // if there is a match, add the layer to the romanFiltered layer group
+        romanFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the romanFiltered layer group
+        romanFiltered.removeLayer(layer);
+      };
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == 'Gr') {
+        // if there is a match, add the layer to the greekFiltered layer group
+        greekFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the greekFiltered layer group
+        greekFiltered.removeLayer(layer);
+      };
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == 'H') {
+        // if there is a match, add the layer to the hebrewFiltered layer group
+        hebrewFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the hebrewFiltered layer group
+        hebrewFiltered.removeLayer(layer);
+      };
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == ' ') {
+        // if there is a match, add the layer to the cyrillicFiltered layer group
+        cyrillicFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the cyrillicFiltered layer group
+        cyrillicFiltered.removeLayer(layer);
+      };
+      if (startYear >= firstYear && endYear <= secondYear && props.CLASS == 'Gl') {
+        // if there is a match, add the layer to the glagolithicFiltered layer group
+        glagolithicFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the glagolithicFiltered layer group
+        glagolithicFiltered.removeLayer(layer);
+      };
+    });
   };
 
   // Define a function for zooming to point locations

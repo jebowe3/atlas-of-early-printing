@@ -208,6 +208,9 @@
     	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }).addTo(map);
 
+    // define array of values in an array
+    const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step));
+
     // Define an empty layer group for the filtered data
     const conflictsFiltered = L.layerGroup();
     const spreadOfPrintingFiltered = L.layerGroup();
@@ -218,6 +221,7 @@
     const hebrewFiltered = L.layerGroup();
     const cyrillicFiltered = L.layerGroup();
     const glagolithicFiltered = L.layerGroup();
+    const poliBordersFiltered = L.layerGroup().addTo(map);
 
     // use jquery to load migration GeoJSON data
     $.when(
@@ -433,85 +437,13 @@
       }
     });
 
-/*
-    const gothic = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == 'G') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/red.png'
-            })
-          });
+    const poliBorders = L.geoJson(poli, {
+      style: function(feature) {
+        return {
+          color: '#A9A9A9',
         }
       }
     });
-
-    const roman = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == 'R') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/blue.png'
-            })
-          });
-        }
-      }
-    });
-
-    const greek = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == 'Gr') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/orange.png'
-            })
-          });
-        }
-      }
-    });
-
-    const hebrew = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == 'H') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/yellow.png'
-            })
-          });
-        }
-      }
-    });
-
-    const cyrillic = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == ' ') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/white.png'
-            })
-          });
-        }
-      }
-    });
-
-    const glagolithic = L.geoJson(typo, {
-      pointToLayer: function(feature, latlng) {
-        const props = feature.properties;
-        if (props.CLASS == 'Gl') {
-          return L.marker(latlng, {
-            icon: L.icon({
-              iconUrl: 'icons/green.png'
-            })
-          });
-        }
-      }
-    });
-*/
 
     const overlaysTree = {
       label: '<font style="font-size:14px">Layers</font>',
@@ -537,37 +469,27 @@
       ]
     };
 
-/*
-    // define the overlays
-    const overlays = {
-      "Spread of Printing": spreadOfPrintingFiltered,
-      "Paper Mills": mills,
-      "Universities": universitiesFiltered,
-      "Fairs": fairs,
-      "Conflicts": conflictsFiltered
-    };
-
-    // add layer control to map
-    L.control.layers(null, overlays, {
-      collapsed: false
-    }).addTo(map);
-*/
-
     L.control.layers.tree(null, overlaysTree, {
       collapsed: false,
       closedSymbol: '&#9656',
       openedSymbol: '&#9662'
     }).addTo(map);
 
-    // get the numeric position of the typography entry in the layer control
-    const typographyPosition = overlaysTree.children.length - 1;
+    // define the layer labels in the layer control
+    let layersList = $('.leaflet-layerstree-header-name');
 
-    // check if typography is collapsed on map loading
-    if (overlaysTree.children[typographyPosition].collapsed == false) {
-      document.getElementById("typographyDiv").style.display = "block";
-    } else {
-      document.getElementById("typographyDiv").style.display = "none";
-    }
+    // loop through all of the layer labels
+    for (var i = 0; i < layersList.length; i++) {
+      // if one of them is Gothic...
+      if (layersList[i].innerText == 'Gothic') {
+        // check if it is hidden or visible
+        if ( $('.leaflet-layerstree-header-name').is(':hidden') == true) {
+          document.getElementById("typographyDiv").style.display = "none";
+        } else {
+          document.getElementById("typographyDiv").style.display = "block";
+        }
+      }
+    };
 
     // listen for a click on the collapsible headers in the layer control
     $('.leaflet-layerstree-header.leaflet-layerstree-header-pointer').on('click', function(event) {
@@ -664,7 +586,7 @@
     });
 
     // call the sequenceUI function
-    sequenceUI(conflicts, spreadOfPrinting, universities, typography /*gothic, roman, greek, hebrew, cyrillic, glagolithic*/);
+    sequenceUI(conflicts, spreadOfPrinting, universities, typography, poliBorders);
 
     // define firstYear
     let firstYear = $('#slider-range').slider("values", 0);
@@ -672,12 +594,12 @@
     let secondYear = $('#slider-range').slider("values", 1);
 
     // call the updateData function
-    updateData(conflicts, spreadOfPrinting, universities, typography,/*gothic, roman, greek, hebrew, cyrillic, glagolithic,*/ firstYear, secondYear);
+    updateData(conflicts, spreadOfPrinting, universities, typography, poliBorders, firstYear, secondYear);
 
   });
 
   // define the UI slider with a function called "sequenceUI"
-  function sequenceUI(conflicts, spreadOfPrinting, universities, typography /*gothic, roman, greek, hebrew, cyrillic, glagolithic*/) {
+  function sequenceUI(conflicts, spreadOfPrinting, universities, typography, poliBorders) {
     $( "#slider-range" ).slider({
       range: true,
       min: 1450,
@@ -685,6 +607,8 @@
       values: [ 1450, 1460 ],
       slide: function( event, ui ) {
         $( "#amount" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        // define the array of values in every chosen ui slider range
+        const sliderRange = range(ui.values[0],ui.values[1],1);
         // iterate through the conflicts layer
         conflicts.eachLayer(function(layer) {
           let startYear = layer.feature.properties.STRYEAR;
@@ -767,14 +691,42 @@
             glagolithicFiltered.removeLayer(layer);
           };
         });
+        // iterate through the poliBorders layer
+        poliBorders.eachLayer(function(layer) {
+          let startYear = layer.feature.properties.START;
+          let endYear = layer.feature.properties.END;
+          // define the array of values in each border range
+          let poliRange = range(startYear,endYear,1);
+          // check for matching values
+          let intersection = poliRange.filter(element => sliderRange.includes(element));
+          // get the maximum value
+          let max = intersection.reduce((a,b)=>Math.max(a,b), -Infinity);
+          // remove infinity and check if max is between the first and last slider years 
+          if (max != -Infinity && max >= ui.values[0] && max <= ui.values[1]) {
+            console.log(max);
+            // if there is a match, add the layer to the poliBordersFiltered layer group
+            poliBordersFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the poliBordersFiltered layer group
+            poliBordersFiltered.removeLayer(layer);
+          }
+/*
+          if (startYear >= ui.values[0] && endYear <= ui.values[1]) {
+            // if there is a match, add the layer to the poliBordersFiltered layer group
+            poliBordersFiltered.addLayer(layer);
+          } else {
+            // otherwise, remove the layer from the poliBordersFiltered layer group
+            poliBordersFiltered.removeLayer(layer);
+          }
+*/
+        });
       }
     });
     $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) +
       " - " + $( "#slider-range" ).slider( "values", 1 ) );
   };
 
-  function updateData(conflicts, spreadOfPrinting, universities, typography/*gothic, roman, greek, hebrew, cyrillic, glagolithic*/, firstYear, secondYear) {
-
+  function updateData(conflicts, spreadOfPrinting, universities, typography, poliBorders, firstYear, secondYear) {
     // iterate through the conflicts layer
     conflicts.eachLayer(function(layer) {
       let startYear = layer.feature.properties.STRYEAR;
@@ -856,6 +808,18 @@
         // otherwise, remove the layer from the glagolithicFiltered layer group
         glagolithicFiltered.removeLayer(layer);
       };
+    });
+    // iterate through the poliBorders layer
+    poliBorders.eachLayer(function(layer) {
+      let startYear = layer.feature.properties.START;
+      let endYear = layer.feature.properties.END;
+      if (startYear >= firstYear && endYear <= secondYear) {
+        // if there is a match, add the layer to the poliBordersFiltered layer group
+        poliBordersFiltered.addLayer(layer);
+      } else {
+        // otherwise, remove the layer from the poliBordersFiltered layer group
+        poliBordersFiltered.removeLayer(layer);
+      }
     });
   };
 

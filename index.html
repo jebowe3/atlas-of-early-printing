@@ -466,42 +466,48 @@
           if (props.CLASS == 'G') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/red.png'
+                iconUrl: 'icons/red.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
           if (props.CLASS == 'R') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/blue.png'
+                iconUrl: 'icons/blue.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
           if (props.CLASS == 'Gr') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/orange.png'
+                iconUrl: 'icons/orange.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
           if (props.CLASS == 'H') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/yellow.png'
+                iconUrl: 'icons/yellow.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
           if (props.CLASS == ' ') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/white.png'
+                iconUrl: 'icons/white.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
           if (props.CLASS == 'Gl') {
             return L.marker(latlng, {
               icon: L.icon({
-                iconUrl: 'icons/green.png'
+                iconUrl: 'icons/green.png',
+                iconSize: [12, 12], // size of the icon
               })
             });
           }
@@ -510,17 +516,99 @@
 
           // identify the coordinates
           const latlngStr = JSON.stringify([layer.getLatLng().lat, layer.getLatLng().lng]);
+          // define the layer properties
+          const props = layer.feature.properties;
 
           // bind a popup to the layer
           layer.bindPopup('<h4>Typography Information</h4>' +
-            '<h5>Type: ' + layer.feature.properties.TYPE +
-            '<br>M Shape: ' + layer.feature.properties.MSHAPE +
-            '<br>Printer: ' + layer.feature.properties.PRINTER +
-            '<br>Place: ' + layer.feature.properties.PLACE +
-            '<br><img src="' + layer.feature.properties.GFTLNK + '" class=popupImage >' +
+            '<h5>Type: ' + props.TYPE +
+            '<br>M Shape: ' + props.MSHAPE +
+            '<br>Printer: ' + props.PRINTER +
+            '<br>Place: ' + props.PLACE +
+            '<br><img src="' + props.GFTLNK + '" class=popupImage >' +
             '<br>' + "<button onclick= 'getLoc(\"" + latlngStr + "\")'>Zoom to</button>" + '</h5>', {
               minWidth: 250,
               'className': 'custom'
+            });
+
+            //define what happens on mouseover
+            layer.on("mouseover", function(e) {
+              if (props.CLASS == 'G') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/red.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'R') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/blue.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'Gr') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/orange.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'H') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/yellow.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+              if (props.CLASS == ' ') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/white.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'Gl') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/green.png',
+                  iconSize: [16, 16], // size of the icon
+                }));
+              }
+            });
+
+            //define what happens on mouseout
+            layer.on("mouseout", function(e) {
+              if (props.CLASS == 'G') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/red.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'R') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/blue.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'Gr') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/orange.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'H') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/yellow.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
+              if (props.CLASS == ' ') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/white.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
+              if (props.CLASS == 'Gl') {
+                e.target.setIcon(L.icon({
+                  iconUrl: 'icons/green.png',
+                  iconSize: [12, 12], // size of the icon
+                }));
+              }
             });
 
         }

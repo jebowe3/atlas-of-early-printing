@@ -654,6 +654,15 @@
         }
       });
 
+      const tradeRoutes = L.geoJson(trad, {
+        style: function(feature) {
+          return {
+            color: '#ccffcc',
+            weight: 2
+          }
+        }
+      });
+
       const overlaysTree = {
         label: '<font style="font-size:14px">Layers</font>',
         collapsed: false,
@@ -668,6 +677,10 @@
           {
             label: 'Political Borders<div id="poliDiv" class="lcontrol" style="display:none">Borders are drawn in ten year increments and all boundaries within the selected time range are displayed. Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
             layer: poliBordersFiltered
+          },
+          {
+            label: 'Trade Routes<div id="tradeDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
+            layer: tradeRoutes
           },
           {
             label: 'Paper Mills<div id="millsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
@@ -776,6 +789,11 @@
       } else {
         document.getElementById("poliDiv").style.display = "none";
       }
+      if (map.hasLayer(tradeRoutes)) {
+        document.getElementById("tradeDiv").style.display = "block";
+      } else {
+        document.getElementById("tradeDiv").style.display = "none";
+      }
       if (map.hasLayer(mills)) {
         document.getElementById("millsDiv").style.display = "block";
       } else {
@@ -815,6 +833,11 @@
           } else {
             document.getElementById("poliDiv").style.display = "none";
           }
+          if (map.hasLayer(tradeRoutes)) {
+            document.getElementById("tradeDiv").style.display = "block";
+          } else {
+            document.getElementById("tradeDiv").style.display = "none";
+          }
           if (map.hasLayer(mills)) {
             document.getElementById("millsDiv").style.display = "block";
           } else {
@@ -852,6 +875,11 @@
           } else {
             document.getElementById("poliDiv").style.display = "none";
           }
+          if (map.hasLayer(tradeRoutes)) {
+            document.getElementById("tradeDiv").style.display = "block";
+          } else {
+            document.getElementById("tradeDiv").style.display = "none";
+          }           
           if (map.hasLayer(mills)) {
             document.getElementById("millsDiv").style.display = "block";
           } else {

@@ -676,6 +676,44 @@
         }
       });
 
+      const bishoprics = L.geoJson(bish, {
+        pointToLayer: function(feature, latlng) {
+          return L.marker(latlng, {
+            icon: L.icon({
+              iconUrl: 'icons/bishoprics.png',
+              iconSize: [7, 16] // size of the icon
+            })
+          })
+        },
+        onEachFeature: function(feature, layer) {
+          // identify the coordinates
+          const latlngStr = JSON.stringify([layer.getLatLng().lat, layer.getLatLng().lng]);
+          // define the layer properties
+          const props = layer.feature.properties;
+          // bind a popup to the layer
+          layer.bindPopup('<h4>Bishopric Information</h4>' +
+            '<h5>Location: ' + props.PLACE +
+            '<br>' + "<button onclick= 'getLoc(\"" + latlngStr + "\")'>Zoom to</button>" + '</h5>', {
+              minWidth: 250,
+              'className': 'custom'
+          });
+          //define what happens on mouseover
+          layer.on("mouseover", function(e) {
+            e.target.setIcon(L.icon({
+              iconUrl: 'icons/bishoprics.png',
+              iconSize: [9, 20], // size of the icon
+            }));
+          });
+          //define what happens on mouseout
+          layer.on("mouseout", function(e) {
+            e.target.setIcon(L.icon({
+              iconUrl: 'icons/bishoprics.png',
+              iconSize: [7, 16], // size of the icon
+            }));
+          });
+        }
+      });
+
       const overlaysTree = {
         label: '<font style="font-size:14px">Layers</font>',
         collapsed: false,
@@ -688,7 +726,7 @@
             layer: outputFiltered
           },
           {
-            label: 'Ecclesiastical Borders<div id="eccDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
+            label: 'Ecclesiastical Borders<div id="eccDiv" class="lcontrol" style="display:none">Geographic data mined from William Shepherd\'s Historical Atlas, 1926 edition. "Ecclesiastical Map of Western Europe in the Middle Ages" [p. 94-95]. Shapefile created by Rob Shepard (GIS Librarian, University of Iowa) and Emma Dellopoulous (GIS Intern, University of Iowa). <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
             layer: ecclesiasticalBorders
           },
           {
@@ -698,6 +736,10 @@
           {
             label: 'Trade Routes<div id="tradeDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
             layer: tradeRoutes
+          },
+          {
+            label: 'Bishoprics<div id="bishopDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
+            layer: bishoprics
           },
           {
             label: 'Paper Mills<div id="millsDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
@@ -816,6 +858,11 @@
       } else {
         document.getElementById("tradeDiv").style.display = "none";
       }
+      if (map.hasLayer(bishoprics)) {
+        document.getElementById("bishopDiv").style.display = "block";
+      } else {
+        document.getElementById("bishopDiv").style.display = "none";
+      }
       if (map.hasLayer(mills)) {
         document.getElementById("millsDiv").style.display = "block";
       } else {
@@ -865,6 +912,11 @@
           } else {
             document.getElementById("tradeDiv").style.display = "none";
           }
+          if (map.hasLayer(bishoprics)) {
+            document.getElementById("bishopDiv").style.display = "block";
+          } else {
+            document.getElementById("bishopDiv").style.display = "none";
+          }
           if (map.hasLayer(mills)) {
             document.getElementById("millsDiv").style.display = "block";
           } else {
@@ -901,7 +953,7 @@
             document.getElementById("eccDiv").style.display = "block";
           } else {
             document.getElementById("eccDiv").style.display = "none";
-          }          
+          }
           if (map.hasLayer(poliBordersFiltered)) {
             document.getElementById("poliDiv").style.display = "block";
           } else {
@@ -912,6 +964,11 @@
           } else {
             document.getElementById("tradeDiv").style.display = "none";
           }
+          if (map.hasLayer(bishoprics)) {
+            document.getElementById("bishopDiv").style.display = "block";
+          } else {
+            document.getElementById("bishopDiv").style.display = "none";
+          }          
           if (map.hasLayer(mills)) {
             document.getElementById("millsDiv").style.display = "block";
           } else {

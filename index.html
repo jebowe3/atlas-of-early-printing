@@ -192,6 +192,8 @@
   <script src="libraries/jquery-ui.min.js"></script>
   <!-- Add a link to js for layer control -->
   <script src="libraries/L.Control.Layers.Tree.js"></script>
+  <!-- Add a link to the color definitions for the ecclesiastical areas -->
+  <script src="libraries/ecclesiasticalColors.js"></script>
   <!-- All JavaScript goes inside the script tags below -->
   <script>
     // define map options
@@ -663,6 +665,17 @@
         }
       });
 
+      const ecclesiasticalBorders = L.geoJson(eccl, {
+        style: function style(feature) {
+          return {
+            fillColor: getColor(feature.properties.Id),
+            fillOpacity: 0.8,
+            color: 'rgb(110,110,110)',
+            weight: 1
+          };
+        }
+      });
+
       const overlaysTree = {
         label: '<font style="font-size:14px">Layers</font>',
         collapsed: false,
@@ -673,6 +686,10 @@
           {
             label: 'Output by Location<div id="outputDiv" class="lcontrol" style="display:none">Data generated from the <a href="https://data.cerl.org/istc/_search" target="_blank" rel="noopener noreferrer">ISTC</a>.</div>',
             layer: outputFiltered
+          },
+          {
+            label: 'Ecclesiastical Borders<div id="eccDiv" class="lcontrol" style="display:none">Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
+            layer: ecclesiasticalBorders
           },
           {
             label: 'Political Borders<div id="poliDiv" class="lcontrol" style="display:none">Borders are drawn in ten year increments and all boundaries within the selected time range are displayed. Data collated from digital and print sources. <a href="mailto:gprickman@folger.edu">Improve this data</a>.</div>',
@@ -784,6 +801,11 @@
       } else {
         document.getElementById("outputDiv").style.display = "none";
       }
+      if (map.hasLayer(ecclesiasticalBorders)) {
+        document.getElementById("eccDiv").style.display = "block";
+      } else {
+        document.getElementById("eccDiv").style.display = "none";
+      }
       if (map.hasLayer(poliBordersFiltered)) {
         document.getElementById("poliDiv").style.display = "block";
       } else {
@@ -828,6 +850,11 @@
           } else {
             document.getElementById("outputDiv").style.display = "none";
           }
+          if (map.hasLayer(ecclesiasticalBorders)) {
+            document.getElementById("eccDiv").style.display = "block";
+          } else {
+            document.getElementById("eccDiv").style.display = "none";
+          }
           if (map.hasLayer(poliBordersFiltered)) {
             document.getElementById("poliDiv").style.display = "block";
           } else {
@@ -870,6 +897,11 @@
           } else {
             document.getElementById("outputDiv").style.display = "none";
           }
+          if (map.hasLayer(ecclesiasticalBorders)) {
+            document.getElementById("eccDiv").style.display = "block";
+          } else {
+            document.getElementById("eccDiv").style.display = "none";
+          }          
           if (map.hasLayer(poliBordersFiltered)) {
             document.getElementById("poliDiv").style.display = "block";
           } else {
@@ -879,7 +911,7 @@
             document.getElementById("tradeDiv").style.display = "block";
           } else {
             document.getElementById("tradeDiv").style.display = "none";
-          }           
+          }
           if (map.hasLayer(mills)) {
             document.getElementById("millsDiv").style.display = "block";
           } else {
